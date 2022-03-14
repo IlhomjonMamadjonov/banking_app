@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_credit_card/flutter_credit_card.dart';
 import 'package:new_one/models/card_model.dart';
 import 'package:new_one/pages/card_list_page.dart';
 import 'package:new_one/services/http_service.dart';
@@ -102,6 +101,7 @@ class _CreateCardPageState extends State<CreateCardPage> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: TextField(
+                        textInputAction: TextInputAction.next,
                         maxLength: 16,
                         controller: cardNumberController,
                         cursorColor: Colors.grey,
@@ -137,6 +137,7 @@ class _CreateCardPageState extends State<CreateCardPage> {
                             ),
                             child: TextField(
                               maxLength: 4,
+                              textInputAction: TextInputAction.next,
                               controller: expiritionController,
                               cursorColor: Colors.grey,
                               keyboardType: TextInputType.number,
@@ -167,6 +168,7 @@ class _CreateCardPageState extends State<CreateCardPage> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: TextField(
+                              textInputAction: TextInputAction.next,
                               keyboardType: TextInputType.number,
                               controller: cvvController,
                               maxLength: 3,
@@ -200,6 +202,7 @@ class _CreateCardPageState extends State<CreateCardPage> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: TextField(
+                        textInputAction: TextInputAction.done,
                         controller: nameController,
                         cursorColor: Colors.grey,
                         decoration: const InputDecoration(

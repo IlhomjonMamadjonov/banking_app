@@ -41,7 +41,8 @@ class Network {
   /// POST method///
   static Future<String?> POST(String api, Map<String, String> params) async {
     Uri uri = Uri.https(getServer(), api, params);
-    Response response = await post(uri, body: jsonEncode(params),headers: getHeaders());
+    Response response =
+        await post(uri, body: jsonEncode(params), headers: getHeaders());
     if (response.statusCode == 200 || response.statusCode == 201) {
       return response.body;
     }
@@ -72,5 +73,12 @@ class Network {
       'cvvCode': card.cvvCode
     });
     return params;
+  }
+
+  //parsing
+  static List<ModelCard> parseCard(string) {
+    List<ModelCard> result =
+        List.from(jsonDecode(string).map((e) => ModelCard.fromJson(e)));
+    return result;
   }
 }

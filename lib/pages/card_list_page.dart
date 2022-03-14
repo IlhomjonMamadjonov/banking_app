@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_credit_card/credit_card_brand.dart';
+import 'package:flutter_credit_card/credit_card_widget.dart';
+import 'package:flutter_credit_card/flutter_credit_card.dart';
+import 'package:new_one/models/card_model.dart';
 import 'package:new_one/pages/create_card_page.dart';
+import 'package:new_one/services/http_service.dart';
 
 class CardList extends StatefulWidget {
   const CardList({Key? key}) : super(key: key);
@@ -11,7 +16,21 @@ class CardList extends StatefulWidget {
 
 class _CardListState extends State<CardList> {
   String text = "No cards yet";
-  List<Card> cards = [];
+  List<ModelCard> cards = [];
+
+  @override
+  void initState() {
+    super.initState();
+    bringCards();
+  }
+
+  void bringCards() {
+    Network.GET(Network.API_LIST, Network.paramsEmpty()).then((value) {
+      setState(() {
+        cards = Network.parseCard(value);
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,15 +38,13 @@ class _CardListState extends State<CardList> {
         child: Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0,
+        elevation: 2,
         actions: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(100),
-            child: Image.asset(
-              "assets/images/profil.jpg",
-              fit: BoxFit.cover,
-            ),
-          ),
+              borderRadius: BorderRadius.circular(100),
+              child: CircleAvatar(
+                backgroundImage: AssetImage('assets/images/profil.jpg'),
+              )),
           SizedBox(
             width: 15,
           ),
@@ -49,21 +66,18 @@ class _CardListState extends State<CardList> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          color: Colors.white,
-          padding: EdgeInsets.only(
-            top: 15,
-            left: 15,
-            right: 15,
-          ),
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
+          color: Colors.grey.shade200,
+          padding: EdgeInsets.all(15),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                height: 200,
-                width: MediaQuery.of(context).size.width,
-              ),
+              ListView.builder(
+                  itemCount: cards.length,
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return cardBuilder(context, cards[index], index);
+                  }),
               // Add button
               Container(
                 margin: const EdgeInsets.only(top: 24.0),
@@ -75,6 +89,9 @@ class _CardListState extends State<CardList> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => CreateCardPage()));
+                    setState(() {
+                      bringCards();
+                    });
                   },
                   backgroundColor: Colors.transparent,
                   child: Icon(Icons.add),
@@ -89,5 +106,23 @@ class _CardListState extends State<CardList> {
         ),
       ),
     ));
+  }
+
+  Widget cardBuilder(BuildContext context, ModelCard card, int index) {
+    return CreditCardWidget(
+      height: MediaQuery.of(context).size.height * 0.26,
+      cardNumber: card.cardNumber,
+      expiryDate: card.expiryDate,
+      cardHolderName: card.holderName,
+      cvvCode: card.cvvCode,
+      obscureCardNumber: true,
+      obscureCardCvv: false,
+      isHolderNameVisible: true,
+      cardBgColor: Colors.teal,
+      isSwipeGestureEnabled: true,
+      isChipVisible: true,
+      onCreditCardWidgetChange: (CreditCardBrand creditCardBrand) {},
+      showBackView: false,
+    );
   }
 }
